@@ -3,10 +3,20 @@ name: Sync merged PR to Notion and Telegram
 on:
   pull_request:
     types: [closed]
+  workflow_dispatch:
+    inputs:
+      task_id:
+        description: Notion task ID used for a safe dry run
+        required: true
+        default: TSK-2
+      pr_url:
+        description: Pull request URL used in the sample notification
+        required: true
+        default: https://github.com/andresdaguilar/notion-project-automation/pull/12
 
 jobs:
   sync:
-    if: github.event.pull_request.merged == true
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -23,8 +33,9 @@ jobs:
           NOTION_TASKS_DATA_SOURCE_ID: ${{ secrets.NOTION_TASKS_DATA_SOURCE_ID }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && 'true' || 'false' }}
+          PR_TITLE: ${{ github.event.pull_request.title || inputs.task_id }}
           PR_BODY: ${{ github.event.pull_request.body }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_URL: ${{ github.event.pull_request.html_url || inputs.pr_url }}
           PR_REPOSITORY: ${{ github.repository }}
         run: npm run sync
