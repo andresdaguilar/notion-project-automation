@@ -1,0 +1,14 @@
+{
+  "name": "notion-github-project-automation",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-merged-pr.mjs",
+    "demo": "DRY_RUN=true PR_TITLE='TSK-2 Add payment-terminal retry handling' PR_URL='https://github.com/andresdaguilar/notion-project-automation/pull/12' PR_REPOSITORY='andresdaguilar/notion-project-automation' node scripts/sync-merged-pr.mjs",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
